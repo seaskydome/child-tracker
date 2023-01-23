@@ -1,3 +1,4 @@
+// this file contains starting up the server
 import app from "./app";
 // because it is the default export we can give it any name
 import env from "./util/validateEnv"
