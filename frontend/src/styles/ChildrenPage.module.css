@@ -1,0 +1,10 @@
+.child {
+  height: 200px;
+  min-width: 150px;
+  transition: box-shadow .2s ease-in-out;
+  cursor: pointer;
+}
+
+.child:hover {
+  box-shadow: rgba(165, 201, 202, 0.3) 0px 6px 24px 0px, rgba(165, 201, 202, 0.5) 0px 0px 0px 1px;
+}

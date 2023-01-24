@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
-import "./App.css";
-import { Button } from "react-bootstrap";
-import { Child } from "./models/child";
+import { Child as ChildModel } from "./models/child";
+import Child from "./components/child";
+import { Container, Row, Col } from "react-bootstrap";
+import styles from "./styles/ChildrenPage.module.css";
 
 function App() {
-  const [children, setChildren] = useState<Child[]>([]);
+  const [children, setChildren] = useState<ChildModel[]>([]);
 
   useEffect(() => {
     async function loadNotes() {
@@ -31,9 +31,15 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      {JSON.stringify(children)}
-    </div>
+    <Container>
+      <Row xs={1} md={2} xl={3} className="g-4">
+      {children.map((child) => (
+        <Col key={child._id}>
+          <Child child={child} className={styles.child}/>
+        </Col>
+      ))}
+      </Row>
+    </Container>
   );
 }
 
