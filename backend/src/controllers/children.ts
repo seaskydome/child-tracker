@@ -23,11 +23,12 @@ export const getChild: RequestHandler = async (req, res, next) => {
 
   try {
     // check if id is valid
-    if (!mongoose.isValidObjectId(childId)) throw createHttpError(400, "Invalid child id")
+    if (!mongoose.isValidObjectId(childId))
+      throw createHttpError(400, "Invalid child id");
 
     const child = await ChildModel.findById(childId).exec();
     // throw error if there is nothing at the id
-    if(!child) throw createHttpError(404, "Child not found")
+    if (!child) throw createHttpError(404, "Child not found");
 
     res.status(200).json(child);
   } catch (error) {
@@ -54,7 +55,7 @@ export const createChild: RequestHandler<
 
   try {
     // 400 is bad request (when an argument is missing)
-    if(!name) throw createHttpError(400, "Child must have a name");
+    if (!name) throw createHttpError(400, "Child must have a name");
 
     const newChild = await ChildModel.create({
       name: name,
@@ -68,3 +69,70 @@ export const createChild: RequestHandler<
     next(error); // forward to error handler function
   }
 };
+
+interface UpdateChildParams {
+  childId: string;
+}
+
+interface UpdateChildBody {
+  name?: string;
+  gender?: string;
+  age?: number;
+}
+
+export const updateChild: RequestHandler<
+  UpdateChildParams,
+  unknown,
+  UpdateChildBody,
+  unknown
+> = async (req, res, next) => {
+  const childId = req.params.childId;
+
+  const newName = req.body.name;
+  const newGender = req.body.gender;
+  const newAge = req.body.age;
+
+  try {
+    // check if id is valid
+    if (!mongoose.isValidObjectId(childId))
+      throw createHttpError(400, "Invalid child id");
+
+    if (!newName) throw createHttpError(400, "Child must have a name");
+
+    const child = await ChildModel.findById(childId).exec();
+
+    if (!child) throw createHttpError(404, "Child not found");
+
+    child.name = newName;
+    child.gender = newGender;
+    child.age = newAge;
+
+    // child.save() saves the chagnes we made to the object
+    const updatedChild = await child.save();
+
+    res.status(200).json(updatedChild);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteChild: RequestHandler = async (req, res, next) => {
+  const childId = req.params.childId;
+
+  try {
+    if (!mongoose.isValidObjectId(childId))
+      throw createHttpError(400, "Invalid child id");
+
+    const child = await ChildModel.findById(childId).exec();
+
+    if (!child) throw createHttpError(404, "Child not found");
+
+    await child.remove();
+    
+    // 204 deletion successful. we use sendStatus because we dont
+    // need to send any data back, we are just sending the status
+    res.sendStatus(204);
+  } catch (error) {
+    next(error);
+  }
+}
