@@ -3,6 +3,7 @@ import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
 import childrenRoutes from "./routes/children";
 import morgan from "morgan";
+import createHttpError, { isHttpError } from "http-errors";
 
 const app = express();
 
@@ -20,7 +21,8 @@ app.use("/api/children", childrenRoutes)
 
 // we get to this middleware  when we access an endpoint we havent set up
 app.use((req, res, next) => {
-  next(Error("Endpoint not found"));
+  // this create httperror takes a status code and message
+  next(createHttpError(404, "Endpoint not found"));
 });
 
 // express error handler, has to be at the bottom
@@ -31,9 +33,13 @@ app.use(
   (error: unknown, req: Request, res: Response, next: NextFunction) => {
     console.error(error);
     let errorMessage = "An unknown error occurred";
-    if (error instanceof Error) errorMessage = error.message;
+    let statusCode = 500;
+    if (isHttpError(error)) {
+      statusCode = error.status;
+      errorMessage = error.message;
+    }
     // set status to 500 (server error) and send message to frontend!
-    res.status(500).json({ error: errorMessage });
+    res.status(statusCode).json({ error: errorMessage });
   }
 );
 
