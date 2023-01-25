@@ -8,11 +8,12 @@ import { MdDelete } from "react-icons/md"
 interface ChildProps {
   child: ChildModel,
   onDeleteChildClicked: (child: ChildModel) => void,
+  onChildClicked: (child: ChildModel) => void,
   className?: string,
 }
 
 // destructuring syntax in the thing
-const Child = ({ child, className, onDeleteChildClicked }: ChildProps) => {
+const Child = ({ child, className, onDeleteChildClicked, onChildClicked }: ChildProps) => {
 
   const { name, gender, age, createdAt, updatedAt } = child;
 
@@ -24,7 +25,10 @@ const Child = ({ child, className, onDeleteChildClicked }: ChildProps) => {
   }
 
   return (
-    <Card className={`${styles.childCard} ${className}`}>
+    <Card
+      className={`${styles.childCard} ${className}`}
+      onClick={() => onChildClicked(child)}
+    >
       <Card.Body className={styles.cardBody}>
         <Card.Title className={styleUtils.flexCenter}>
           {name}

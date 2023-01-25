@@ -5,13 +5,14 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import styles from "./styles/ChildrenPage.module.css";
 import styleUtils from "./styles/utils.module.css";
 import * as ChildrenApi from "./network/children_api";
-import AddChildDialog from "./components/AddChildDialog";
+import AddEditChildDialog from "./components/AddEditChildDialog";
 import { FaPlus } from "react-icons/fa";
 
 function App() {
   const [children, setChildren] = useState<ChildModel[]>([]);
 
   const [showAddChildDialog, setShowAddNoteDialog] = useState(false);
+  const [childToEdit, setChildToEdit] = useState<ChildModel|null>(null);
 
   useEffect(() => {
     async function loadNotes() {
@@ -53,12 +54,13 @@ function App() {
               child={child}
               className={styles.child}
               onDeleteChildClicked={deleteChild}
+              onChildClicked={setChildToEdit}
             />
           </Col>
         ))}
       </Row>
       {showAddChildDialog && (
-        <AddChildDialog
+        <AddEditChildDialog
           onDismiss={() => setShowAddNoteDialog(false)}
           onChildSaved={(newChild) => {
             setChildren([...children, newChild]);
@@ -66,6 +68,18 @@ function App() {
           }}
         />
       )}
+      {childToEdit &&
+        <AddEditChildDialog
+          childToEdit={childToEdit}
+          onDismiss={() => setChildToEdit(null)}
+          onChildSaved={(updatedChild) => {
+            setChildren(children.map(c => (
+              c._id === updatedChild._id ? updatedChild : c
+            )));
+            setChildToEdit(null);
+        }}
+      />
+      }
     </Container>
   );
 }

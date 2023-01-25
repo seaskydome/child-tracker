@@ -4,22 +4,37 @@ import { Child } from "../models/child";
 import { ChildInput } from "../network/children_api";
 import * as ChildrenApi from "../network/children_api";
 
-interface AddChildDialogProps {
+interface AddEditChildDialogProps {
+  // if we pass this, we know we are editing
+  // if we don't we know we are adding
+  childToEdit?: Child,
+
   onDismiss: () => void;
   onChildSaved: (child: Child) => void;
 }
 
-const AddChildDialog = ({ onDismiss, onChildSaved }: AddChildDialogProps) => {
+const AddChildDialog = ({ childToEdit, onDismiss, onChildSaved }: AddEditChildDialogProps) => {
   // react hook forms!! yay
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<ChildInput>();
+  } = useForm<ChildInput>({
+    defaultValues: {
+      name: childToEdit?.name || "",
+      gender: childToEdit?.gender || "",
+      age: childToEdit?.age,
+    }
+  });
 
   async function onSubmit(input: ChildInput) {
     try {
-      const childResponse = await ChildrenApi.createChild(input);
+      let childResponse: Child;
+      if(childToEdit) {
+        childResponse = await ChildrenApi.updateChild(childToEdit._id, input);
+      } else {
+        childResponse = await ChildrenApi.createChild(input);
+      }
       // this represents passing the successfully added child and
       // adding it to the UI later
       onChildSaved(childResponse);
@@ -32,11 +47,11 @@ const AddChildDialog = ({ onDismiss, onChildSaved }: AddChildDialogProps) => {
   return (
     <Modal show onHide={onDismiss}>
       <Modal.Header closeButton>
-        <Modal.Title>Add Child</Modal.Title>
+        <Modal.Title>{childToEdit ? "Edit Child" : "Add Child"}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
-        <Form id="addChildForm" onSubmit={handleSubmit(onSubmit)}>
+        <Form id="addEditChildForm" onSubmit={handleSubmit(onSubmit)}>
           <Form.Group className="mb-3">
             <Form.Label>Name</Form.Label>
             <Form.Control
@@ -67,7 +82,7 @@ const AddChildDialog = ({ onDismiss, onChildSaved }: AddChildDialogProps) => {
       </Modal.Body>
 
       <Modal.Footer>
-        <Button type="submit" form="addChildForm" disabled={isSubmitting}>
+        <Button type="submit" form="addEditChildForm" disabled={isSubmitting}>
           Submit
         </Button>
       </Modal.Footer>
