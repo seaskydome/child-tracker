@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Child as ChildModel } from "./models/child";
 import Child from "./components/child";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col, Button, Spinner } from "react-bootstrap";
 import styles from "./styles/ChildrenPage.module.css";
 import styleUtils from "./styles/utils.module.css";
 import * as ChildrenApi from "./network/children_api";
@@ -11,17 +11,24 @@ import { FaPlus } from "react-icons/fa";
 function App() {
   const [children, setChildren] = useState<ChildModel[]>([]);
 
+  const [childrenLoading, setChildrenLoading] = useState(true);
+  const [showChildrenLoadingError, setShowChildrenLoadingError] = useState(false);
+
   const [showAddChildDialog, setShowAddNoteDialog] = useState(false);
   const [childToEdit, setChildToEdit] = useState<ChildModel|null>(null);
 
   useEffect(() => {
     async function loadNotes() {
       try {
+        setShowChildrenLoadingError(false);
+        setChildrenLoading(true);
         const children = await ChildrenApi.fetchChildren();
         setChildren(children);
       } catch (error) {
         console.error(error);
-        alert(error);
+        setShowChildrenLoadingError(true);
+      } finally {
+        setChildrenLoading(false);
       }
     }
 
@@ -38,16 +45,8 @@ function App() {
     }
   }
 
-  return (
-    <Container>
-      <Button
-        className={`mb-4 ${styleUtils.blockCenter} ${styleUtils.flexCenter}`}
-        onClick={() => setShowAddNoteDialog(true)}
-      >
-        <FaPlus />
-        Add new child
-      </Button>
-      <Row xs={1} md={2} xl={3} className="g-4">
+  const childrenGrid = (
+    <Row xs={1} md={2} xl={3} className={`g-4 ${styles.childrenGrid}`}>
         {children.map((child) => (
           <Col key={child._id}>
             <Child
@@ -59,6 +58,36 @@ function App() {
           </Col>
         ))}
       </Row>
+  )
+
+  return (
+    <Container className={styles.childrenPage}>
+      <Button
+        className={`mb-4 ${styleUtils.blockCenter} ${styleUtils.flexCenter}`}
+        onClick={() => setShowAddNoteDialog(true)}
+      >
+        <FaPlus />
+        Add new child
+      </Button>
+
+      {/* 
+        If children loading show a spinner
+        If theres an error show an error
+        If both are off:
+          If you have children show them
+          If not show a message
+      */}
+      {childrenLoading && <Spinner animation="border" variant="primary"/>}
+      {showChildrenLoadingError && <p style={{color: "white"}}>Something went wrong. Please refresh the page.</p>}
+      {!childrenLoading && !showChildrenLoadingError && 
+      <>
+        { children.length > 0
+            ? childrenGrid
+            : <p style={{color: "white"}}>You don't have any children yet.</p>
+        }
+      </>
+      }
+
       {showAddChildDialog && (
         <AddEditChildDialog
           onDismiss={() => setShowAddNoteDialog(false)}

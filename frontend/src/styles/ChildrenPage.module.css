@@ -1,3 +1,13 @@
+.childrenPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.children-grid{
+  width: 100%;
+}
+
 .child {
   height: 200px;
   min-width: 150px;
