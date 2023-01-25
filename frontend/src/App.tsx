@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Child as ChildModel } from "./models/child";
 import Child from "./components/child";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import styles from "./styles/ChildrenPage.module.css";
-
+import styleUtils from "./styles/utils.module.css";
+import * as ChildrenApi from "./network/children_api"
+import AddChildDialog from "./components/AddChildDialog";
+  
 function App() {
   const [children, setChildren] = useState<ChildModel[]>([]);
+
+  const [showAddChildDialog, setShowAddNoteDialog] = useState(false);
 
   useEffect(() => {
     async function loadNotes() {
       try {
-        // basic js way to fetch, the second argument is the type of command
-        // we added the PROXY in the package.json which is where we fetch from
-        // and CORS wont have a problem
-        const response = await fetch("/api/children", {
-        method: "GET",
-        });
-
-        // parse the json cuz remember we are sending json
-        const children = await response.json();
+        const children = await ChildrenApi.fetchChildren();
         setChildren(children);
 
       } catch (error) {
@@ -32,6 +29,9 @@ function App() {
 
   return (
     <Container>
+      <Button className={`mb-4 ${styleUtils.blockCenter}`} onClick={() => setShowAddNoteDialog(true)}>
+        Add new child
+      </Button>
       <Row xs={1} md={2} xl={3} className="g-4">
       {children.map((child) => (
         <Col key={child._id}>
@@ -39,6 +39,15 @@ function App() {
         </Col>
       ))}
       </Row>
+      { showAddChildDialog && 
+        <AddChildDialog 
+          onDismiss={() => setShowAddNoteDialog(false)}
+          onChildSaved={(newChild) => {
+            setChildren([...children, newChild])
+            setShowAddNoteDialog(false);
+          }}
+        />
+      }
     </Container>
   );
 }

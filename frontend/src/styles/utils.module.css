@@ -1,0 +1,7 @@
+/* this contains reusable utility classes */
+
+.blockCenter {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
