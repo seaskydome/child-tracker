@@ -43,3 +43,9 @@ export async function createChild(child: ChildInput): Promise<Child> {
 
   return response.json();
 }
+
+export async function deleteChild(childId: string) {
+  await fetchData("/api/children/" + childId, {
+    method: "DELETE"
+  })
+}
