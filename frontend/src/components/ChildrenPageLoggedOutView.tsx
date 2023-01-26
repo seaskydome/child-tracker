@@ -1,6 +1,6 @@
 const ChildrenPageLoggedOutView = () => {
   return ( 
-    <p>Please login to see your children.</p>
+    <p style={{color: "white"}}>Please login to see your children.</p>
    );
 }
  
