@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { User } from "../models/user";
 import { SignUpCredentials } from "../network/children_api";
 import * as ChildrenApi from "../network/children_api";
-import { Button, Form, Modal, ModalBody } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 import TextInputField from "./form/TextInputField";
 import styleUtils from "../styles/utils.module.css";
 

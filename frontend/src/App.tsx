@@ -9,6 +9,7 @@ import AddEditChildDialog from "./components/AddEditChildDialog";
 import { FaPlus } from "react-icons/fa";
 import SignUpModal from "./components/SignUpModal";
 import LoginModal from "./components/LoginModal";
+import NavBar from "./components/NavBar";
 
 function App() {
   const [children, setChildren] = useState<ChildModel[]>([]);
@@ -63,6 +64,13 @@ function App() {
   )
 
   return (
+    <div>
+    <NavBar 
+      loggedInUser={null}
+      onLoginClicked={() => {}}
+      onSignUpClicked={() => {}}
+      onLogoutSuccessful={() => {}}
+    /> 
     <Container className={styles.childrenPage}>
       <Button
         className={`mb-4 ${styleUtils.blockCenter} ${styleUtils.flexCenter}`}
@@ -123,7 +131,7 @@ function App() {
           onLoginSuccessful={() => {}}
         />
       }
-    </Container>
+    </Container></div>
   );
 }
 
