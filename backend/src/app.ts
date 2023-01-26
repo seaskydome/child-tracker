@@ -2,8 +2,12 @@
 import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
 import childrenRoutes from "./routes/children";
+import userRoutes from "./routes/users"
 import morgan from "morgan";
 import createHttpError, { isHttpError } from "http-errors";
+import session from "express-session";
+import env from "./util/validateEnv";
+import MongoStore from "connect-mongo";
 
 const app = express();
 
@@ -12,8 +16,31 @@ app.use(morgan("dev"));
 // sets up express so that we can send json to the server
 app.use(express.json());
 
-// routes with this
+app.use(session({
+  // key to identify the user session, stored in the browser
+  secret: env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  // the real cookei that will be stored
+  cookie: {
+    maxAge: 60 * 60 * 1000,
+  },
+  // as long as the user is using the site the cookie will 
+  // refresh automagically
+  rolling: true,
+  // basically this is where we store the sessions.
+  // if we dont declare anything then it will be stored in the server
+  // and everyone will be logged out when the server restarts!
+  // so instead we store it in the mongo store!!
+  store: MongoStore.create({
+    mongoUrl: env.MONGO_CONNECTION_STRING
+  })
+}))
+
+// routes to children
 app.use("/api/children", childrenRoutes)
+// routes to users
+app.use("/api/users", userRoutes);
 
 // these app.use or app.get things are called middleware,
 // they handle events for us. u can read more about it on
