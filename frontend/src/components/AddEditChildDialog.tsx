@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { Child } from "../models/child";
 import { ChildInput } from "../network/children_api";
 import * as ChildrenApi from "../network/children_api";
+import TextInputField from "./form/TextInputField";
 
 interface AddEditChildDialogProps {
   // if we pass this, we know we are editing
@@ -52,32 +53,31 @@ const AddChildDialog = ({ childToEdit, onDismiss, onChildSaved }: AddEditChildDi
 
       <Modal.Body>
         <Form id="addEditChildForm" onSubmit={handleSubmit(onSubmit)}>
-          <Form.Group className="mb-3">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Johnny"
-              isInvalid={!!errors.name}
-              {...register("name", { required: "Required" })}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.name?.message}
-            </Form.Control.Feedback>
-          </Form.Group>
+          <TextInputField 
+            name="name"
+            label="Name"
+            type="text"
+            placeholder="Name"
+            register={register}
+            registerOptions={{ required: "Required"}}
+            error={errors.name}
+          />
 
-          <Form.Group className="mb-3">
-            <Form.Label>Gender</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Non-binary"
-              {...register("gender")}
-            />
-          </Form.Group>
+          <TextInputField 
+            name="gender"
+            label="Gender"
+            type="text"
+            placeholder="Gender"
+            register={register}
+          />
 
-          <Form.Group className="mb-3">
-            <Form.Label>Age</Form.Label>
-            <Form.Control type="number" placeholder="7" {...register("age")} />
-          </Form.Group>
+          <TextInputField 
+            name="age"
+            label="Age"
+            type="number"
+            placeholder="7"
+            register={register}
+          />
         </Form>
       </Modal.Body>
 
