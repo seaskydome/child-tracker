@@ -8,6 +8,7 @@ import * as ChildrenApi from "./network/children_api";
 import AddEditChildDialog from "./components/AddEditChildDialog";
 import { FaPlus } from "react-icons/fa";
 import SignUpModal from "./components/SignUpModal";
+import LoginModal from "./components/LoginModal";
 
 function App() {
   const [children, setChildren] = useState<ChildModel[]>([]);
@@ -110,10 +111,16 @@ function App() {
           }}
         />
       }
-      { true &&
+      { false &&
         <SignUpModal 
           onDismiss={() => {}}
           onSignUpSuccessful={() => {}}
+        />
+      }
+      { false &&
+        <LoginModal 
+          onDismiss={() => {}}
+          onLoginSuccessful={() => {}}
         />
       }
     </Container>
