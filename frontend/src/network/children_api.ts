@@ -1,4 +1,5 @@
 import { Child } from "../models/child";
+import { User } from "../models/user";
 
 async function fetchData(input: RequestInfo, init?: RequestInit) {
   // basic js way to fetch, the second argument is the type of command
@@ -13,6 +14,61 @@ async function fetchData(input: RequestInfo, init?: RequestInit) {
     const errorMessage = errorBody.error;
     throw Error(errorMessage);
   }
+}
+
+// gets the user data from the cookies (if we are logged in)
+// this works because frontend and backend are on the same URL.
+// if they are on different, you need to include the credentials
+// explicitly, which we should do in the fetchData function
+export async function getLoggedInUser(): Promise<User> {
+  const response = await fetchData("/api/users", {
+    method: "GET",
+  })
+
+  return response.json();
+}
+
+export interface SignUpCredentials {
+  username: string,
+  email: string, 
+  password: string,
+}
+
+export async function signUp(credentials: SignUpCredentials): Promise<User> {
+  const response = await fetchData("/api/users/signup", 
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(credentials),
+  });
+
+  return response.json();
+}
+
+export interface LoginCredentials {
+  username: string,
+  password: string,
+}
+
+export async function login(credentials: LoginCredentials): Promise<User> {
+  const response = await fetchData("/api/users/login", 
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(credentials),
+  });
+
+  return response.json();
+}
+
+export async function logout() {
+  await fetchData("/api/users/logout", {
+    method: "POST"
+  });
 }
 
 export async function fetchChildren(): Promise<Child[]> {
