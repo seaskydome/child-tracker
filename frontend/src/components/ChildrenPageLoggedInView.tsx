@@ -63,11 +63,11 @@ const ChildrenPageLoggedInView = () => {
   return ( 
     <>
       <Button
-        className={`mb-4 ${styleUtils.blockCenter} ${styleUtils.flexCenter}`}
+        className={`${styles.addButton} ${styleUtils.blockCenter} ${styleUtils.flexCenter}`}
         onClick={() => setShowAddNoteDialog(true)}
       >
         <FaPlus />
-        Add new child
+        Add Child
       </Button>
 
       {/* 

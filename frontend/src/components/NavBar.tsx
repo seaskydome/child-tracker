@@ -26,6 +26,7 @@ const NavBar = ({
       variant="dark"
       expand="sm"
       sticky="top"
+      className="mb-4"
     >
       <Container>
         <Navbar.Brand style={{ color: "#A5C9CA" }}>Child Tracker</Navbar.Brand>

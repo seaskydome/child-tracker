@@ -8,6 +8,7 @@ import createHttpError, { isHttpError } from "http-errors";
 import session from "express-session";
 import env from "./util/validateEnv";
 import MongoStore from "connect-mongo";
+import { requiresAuth } from "./middleware/auth";
 
 const app = express();
 
@@ -37,8 +38,8 @@ app.use(session({
   })
 }))
 
-// routes to children
-app.use("/api/children", childrenRoutes)
+// routes to children // you need to be logged in to access!
+app.use("/api/children", requiresAuth, childrenRoutes)
 // routes to users
 app.use("/api/users", userRoutes);
 

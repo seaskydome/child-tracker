@@ -3,6 +3,9 @@ import { InferSchemaType, model, Schema } from "mongoose";
 
 // create a schema for the children
 const childSchema = new Schema({
+  // each child must be associated with a user
+  userId: { type: Schema.Types.ObjectId, required: true},
+  
   name: { type: String, required: true },
   gender: { type: String },
   age: { type: Number },
