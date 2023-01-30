@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
-import ChildrenPageLoggedInView from "./components/ChildrenPageLoggedInView";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginModal from "./components/LoginModal";
 import NavBar from "./components/NavBar";
 import SignUpModal from "./components/SignUpModal";
 import { User } from "./models/user";
-import styles from "./styles/ChildrenPage.module.css";
 import * as ChildrenApi from "./network/children_api";
-import ChildrenPageLoggedOutView from "./components/ChildrenPageLoggedOutView";
+import ChildrenPage from "./pages/ChildrenPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import PrivacyPage from "./pages/PrivacyPage";
 
 function App() {
 
@@ -31,6 +32,7 @@ function App() {
   }, [])
  
   return (
+    <BrowserRouter>
     <div>
     <NavBar 
       loggedInUser={loggedInUser}
@@ -38,16 +40,13 @@ function App() {
       onSignUpClicked={() => setShowSignUpModal(true)}
       onLogoutSuccessful={() => setLoggedInUser(null)}
     /> 
-    <Container className={styles.childrenPage}>
 
-      <>
-      { loggedInUser 
-        ? <ChildrenPageLoggedInView />
-        : <ChildrenPageLoggedOutView />
-      }
-      </>
-
-      
+    <Container>
+      <Routes>
+        <Route path='/' element={<ChildrenPage loggedInUser={loggedInUser}/>}/>
+        <Route path="/privacy" element={<PrivacyPage />}/>
+        <Route path='*' element={<NotFoundPage/>}/>
+      </Routes>
     </Container>
     { showSignUpModal &&
         <SignUpModal 
@@ -68,6 +67,7 @@ function App() {
       />
     }
     </div>
+    </BrowserRouter>
   );
 }
 
